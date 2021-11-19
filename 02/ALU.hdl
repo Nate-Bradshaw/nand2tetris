@@ -26,6 +26,8 @@
 // if (out == 0) set zr = 1
 // if (out < 0) set ng = 1
 
+//16 chips
+
 CHIP ALU {
     IN  
         x[16], y[16],  // 16-bit inputs        
@@ -42,5 +44,12 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
+    Mux16(a=x, b[0]=false, sel=zx, out=x1); //zx turns x to 0 if true
+    Not16(in=x1, out=x1inv); // inverts x for next logic
+    Mux16(a=x1, b=x1inv, sel=nx, out=x2); // nx negates (inverts) x if true
+
+    Mux16(a=y, b[0]=false, sel=zy, out=y1); //zy turns y to 0 if true
+    Not16(in=y1, out=y1inv); // inverts y for next logic
+    Mux16(a=y1, b=y1inv, sel=ny, out=y2); // ny negates (inverts) y if true
    // Put you code here:
 }
