@@ -44,12 +44,32 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-    Mux16(a=x, b[0]=false, sel=zx, out=x1); //zx turns x to 0 if true
-    Not16(in=x1, out=x1inv); // inverts x for next logic
-    Mux16(a=x1, b=x1inv, sel=nx, out=x2); // nx negates (inverts) x if true
+    Mux16(a=x, b[0..15]=false, sel=zx, out=xo); //zx turns x to 0 if true
+    Not16(in=xo, out=notx); // inverts x for next logic
+    Mux16(a=xo, b=notx, sel=nx, out=xn); // nx negates (inverts) x if true
 
-    Mux16(a=y, b[0]=false, sel=zy, out=y1); //zy turns y to 0 if true
-    Not16(in=y1, out=y1inv); // inverts y for next logic
-    Mux16(a=y1, b=y1inv, sel=ny, out=y2); // ny negates (inverts) y if true
-   // Put you code here:
+    Mux16(a=y, b[0]=false, sel=zy, out=yo); //zy turns y to 0 if true
+    Not16(in=yo, out=noty); // inverts y for next logic
+    Mux16(a=yo, b=noty, sel=ny, out=yn); // ny negates (inverts) y if true
+    
+    Add16(a=xn, b=yn, out=xaddy);
+    And16(a=xn, b=yn, out=xandy);
+    Mux16(a=xandy, b=xaddy, sel=f, out=fxy);
+
+    Not16(in=fxy, out=z1);
+    Mux16(a=fxy, b=z1, sel=no, out=out, out[15]=oof, out[0..7]=ool, out[8..15]=oor);
+
+    //Or16(a=oo, b=oo, out=ozr);
+
+    Or8Way(in=ool, out=t1);
+    Or8Way(in=oor, out=t2);
+    Or(a=t1, b=t2, out=ozr);
+    Not(in=ozr, out=zr);
+
+    And(a=oof, b=true, out=ng);
+    //Or16(a=oo, b[0..15]=false, out=out);
 }
+
+/*
+
+*/
